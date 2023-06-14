@@ -1,7 +1,7 @@
 const router = require('express').Router()
 const avalancheController = require("../controllers/avalanche-controllers")
 
-router.route('/:location')
-.get(avalancheController.getAllAreas)
+router.route('/:lat/:lon')
+.get(avalancheController.getArea)
 
 module.exports = router
