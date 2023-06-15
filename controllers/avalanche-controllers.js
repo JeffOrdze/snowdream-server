@@ -1,4 +1,5 @@
 const axios = require("axios");
+const knex = require("knex")(require("../knexfile"));
 
 const getArea = (req, res) => {
   axios
@@ -18,6 +19,19 @@ const getArea = (req, res) => {
         .json({ highlights, confidence, summaries, dangerRatings });
     })
     .catch((err) => {
+      return res.status(400).json({
+        message: "An error occured in your request, please try again.",
+      });
+    });
+};
+
+const getAll = (_req, res) => {
+  knex("mountains")
+    .select()
+    .then((data) => {
+      res.status(201).json(data);
+    })
+    .catch((err) => {
       return res
         .status(400)
         .json({
@@ -28,4 +42,5 @@ const getArea = (req, res) => {
 
 module.exports = {
   getArea,
+  getAll,
 };
