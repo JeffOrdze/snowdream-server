@@ -8,6 +8,7 @@ const SERVER_URL = process.env.SERVER_URL
 
 app.use(express.json());
 app.use(cors());
+app.use('/static', express.static('public'))
 
 const avalancheRoutes = require('./routes/avalanche-routes')
 const weatherRoutes = require('./routes/weather-routes')
