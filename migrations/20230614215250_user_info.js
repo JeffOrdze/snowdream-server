@@ -4,6 +4,7 @@
  */
 exports.up = function (knex) {
   return knex.schema.createTable("user_info", (table) => {
+    table.increments("id").primary();
     table.integer("mountain_id").unsigned().references("mountains.id");
     table.integer("users_id").unsigned().references("users.id");
   });

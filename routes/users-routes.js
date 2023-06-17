@@ -36,7 +36,9 @@ router.post("/login", async (req, res) => {
   const { username, password } = req.body;
 
   if (!username || !password) {
-    res.status(400).json({ message: "Please enter all required fields" });
+    return res
+      .status(400)
+      .json({ message: "Please enter all required fields" });
   }
 
   const user = await knex("users").where({ username: username }).first();
@@ -73,9 +75,31 @@ router.get("/current", async (req, res) => {
 
     const user = await knex("users").where({ id: decoded.id }).first();
     delete user.password;
-    res.json(user);
+    res.status(200).json(user);
   } catch (error) {
-    return res.status(401).json({ message: "Invalid auth token" });
+    return res.status(400).json({ message: "Invalid auth token" });
+  }
+});
+
+//GET LIST OF MOUNTAINS A USER HAS SELECTED
+
+router.get("/mountains", async (req, res) => {
+  const { id } = req.body;
+
+  if (!id) {
+    return res.status(404).json({ message: "Please login " });
+  }
+
+  try {
+    const mountains = await knex("mountains")
+      .select()
+      .join("user_info", "mountains.id", "user_info.mountain_id")
+      .where("user_info.users_id", id);
+    res.status(201).json(mountains);
+  } catch (error) {
+    return res
+      .status(401)
+      .json({ message: "Could not retrieve user information" });
   }
 });
 

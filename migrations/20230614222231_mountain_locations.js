@@ -3,8 +3,8 @@
  * @returns { Promise<void> }
  */
 exports.up = function (knex) {
-    return knex.schema.alterTable('mountains', function (table) {
-      table.renameColumn('long', 'lon');
+    return knex.schema.table('mountains', function (table) {
+      table.renameColumn('lon', 'long');
     });
   };
   
@@ -13,8 +13,8 @@ exports.up = function (knex) {
    * @returns { Promise<void> }
    */
   exports.down = function (knex) {
-    return knex.schema.alterTable('mountains', function (table) {
-      table.renameColumn('lon', 'long');
+    return knex.schema.table('mountains', function (table) {
+      table.renameColumn('long', 'lon');
     });
   };
 
