@@ -12,9 +12,12 @@ app.use('/static', express.static('public'))
 
 const avalancheRoutes = require('./routes/avalanche-routes')
 const weatherRoutes = require('./routes/weather-routes')
+const userRoutes = require("./routes/users-routes")
 
 app.use("/avalanche", avalancheRoutes)
 app.use("/weather", weatherRoutes)
+app.use("/users", userRoutes)
+
 
 app.listen(PORT, () => { 
     console.log(`running at ${SERVER_URL}${PORT}`)
