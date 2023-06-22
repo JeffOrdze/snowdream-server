@@ -170,4 +170,24 @@ const favoriteMountain = async (req, res) => {
   }
 };
 
-module.exports = { signUp, login, googleLogin, currentUser, likedMountains, favoriteMountain };
+//REMOVE A MOUNTAIN FROM YOUR FAVORITES 
+
+const removeMountain = async(req,res) => { 
+  const { mountain_id, users_id } = req.body
+
+  if (!mountain_id || !users_id) {
+    return res
+      .status(400)
+      .json({ message: "Please provide all required fields" });
+  }
+
+  try {
+    const unlikeMountain = await knex("user_info").delete().where({mountain_id, users_id: mountain_id && users_id});
+    return res.status(200).json(unlikeMountain);
+  } catch (error) {
+    console.log(error);
+    return res.status(404).json({ message: "Error handling your request" });
+  }
+}
+
+module.exports = { signUp, login, googleLogin, currentUser, likedMountains, favoriteMountain, removeMountain };

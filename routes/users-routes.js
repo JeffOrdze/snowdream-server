@@ -16,6 +16,7 @@ router.route("/current")
 router.route("/mountains")
 .get(usersControllers.likedMountains)
 .post(usersControllers.favoriteMountain)
+.delete(usersControllers.removeMountain)
 
 
 module.exports = router
