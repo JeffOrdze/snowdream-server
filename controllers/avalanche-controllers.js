@@ -16,7 +16,7 @@ const getArea = (req, res) => {
       }
       return res
         .status(201)
-        .json({ highlights, confidence, summaries, dangerRatings });
+        .send({ highlights, confidence, summaries, dangerRatings });
     })
     .catch((err) => {
       return res.status(400).json({

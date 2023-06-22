@@ -48,4 +48,11 @@ module.exports = [
     long: "-117.1456",
     img: "http://localhost:8080/static/images/white-water.jpg"
   },
+  {
+    id: 8,
+    name: "Crowfoot Glades",
+    lat: "51.63584894516181",
+    long: "-116.43477948231939",
+    img: "http://localhost:8080/static/images/crowfoot-glades.jpg"
+  },
 ];

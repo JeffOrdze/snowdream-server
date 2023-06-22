@@ -57,7 +57,53 @@ router.post("/login", async (req, res) => {
     { expiresIn: "24h" }
   );
 
-  res.json({ token });
+  return res.status(200).json({ token });
+});
+
+//GOOGLE LOGIN
+
+router.post("/google", async (req, res) => {
+  const { username, password, name } = req.body;
+
+  const hashedPassword = bcrypt.hashSync(password);
+
+  const newUser = {
+    username,
+    name,
+    password: hashedPassword,
+  };
+
+  if (!username || !password) {
+    return res
+      .status(400)
+      .json({ message: "Please enter all required fields" });
+  }
+
+  const user = await knex("users").where({ username: username }).first();
+
+  if (!user) {
+    try {
+      await knex("users").insert(newUser);
+    } catch {
+      return res.status(400).json({ message: "Could not add user" });
+    }
+  }
+
+  try {
+    const googleUser = await knex("users").where({ username: username }).first();
+
+    const token = jwt.sign(
+      { id: googleUser.id, username: googleUser.username },
+      process.env.JWT_KEY,
+      { expiresIn: "24h" }
+    );
+
+    return res.status(201).json(token);
+  } catch (error) {
+    console.log(error);
+  }
+
+  return res.status(200).json({ token });
 });
 
 //GET CURRENT USER
@@ -72,7 +118,6 @@ router.get("/current", async (req, res) => {
 
   try {
     const decoded = jwt.verify(authToken, process.env.JWT_KEY);
-
     const user = await knex("users").where({ id: decoded.id }).first();
     delete user.password;
     res.status(200).json(user);
@@ -81,10 +126,10 @@ router.get("/current", async (req, res) => {
   }
 });
 
-//GET LIST OF MOUNTAINS A USER HAS SELECTED
+//GET LIST OF MOUNTAINS A USER HAS FAVOURITED
 
 router.get("/mountains", async (req, res) => {
-  const { id } = req.body;
+  const { id } = req.query;
 
   if (!id) {
     return res.status(404).json({ message: "Please login " });
@@ -100,6 +145,26 @@ router.get("/mountains", async (req, res) => {
     return res
       .status(401)
       .json({ message: "Could not retrieve user information" });
+  }
+});
+
+//ADD MOUNTAIN TO YOUR FAVORITES
+
+router.post("/mountains", async (req, res) => {
+  const { mountain_id, users_id } = req.body;
+
+  if (!mountain_id || !users_id) {
+    return res
+      .status(400)
+      .json({ message: "Please provide all required fields" });
+  }
+
+  try {
+    const likeMountain = await knex("user_info").insert(req.body);
+    return res.status(201).json(likeMountain);
+  } catch (error) {
+    console.log(error);
+    return res.status(404).json({ message: "Error handling your request" });
   }
 });
 
