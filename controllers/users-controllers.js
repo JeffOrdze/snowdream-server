@@ -22,6 +22,12 @@ const signUp = async (req, res) => {
     password: hashedPassword,
   };
 
+  const uniqueUser = await knex("users").where({username: username})
+
+  if (uniqueUser) { 
+return res.status(400).json({message: "User already exists"})
+  }
+
   try {
     await knex("users").insert(newUser);
     res.status(201).json({ message: "Successfully registered user" });
@@ -102,7 +108,7 @@ const googleLogin = async (req, res) => {
 
     return res.status(201).json(token);
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 
   return res.status(200).json({ token });
@@ -165,7 +171,7 @@ const favoriteMountain = async (req, res) => {
     const likeMountain = await knex("user_info").insert(req.body);
     return res.status(201).json(likeMountain);
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res.status(404).json({ message: "Error handling your request" });
   }
 };
@@ -185,7 +191,7 @@ const removeMountain = async(req,res) => {
     const unlikeMountain = await knex("user_info").delete().where({mountain_id, users_id: mountain_id && users_id});
     return res.status(200).json(unlikeMountain);
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res.status(404).json({ message: "Error handling your request" });
   }
 }
