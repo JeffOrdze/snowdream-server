@@ -8,6 +8,7 @@ exports.up = function (knex) {
     table.string("name").notNullable();
     table.string("lat").notNullable();
     table.string("lon").notNullable();
+    table.json("route")
   });
 };
 
