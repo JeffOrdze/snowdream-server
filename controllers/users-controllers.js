@@ -14,6 +14,12 @@ const signUp = async (req, res) => {
       .json({ message: "Please enter the required fields" });
   }
 
+  if (password.length < 8) {
+    return res
+      .status(400)
+      .json({ message: "Password must be at least 8 characters long." });
+  }
+
   const hashedPassword = bcrypt.hashSync(password);
 
   const newUser = {
@@ -22,17 +28,17 @@ const signUp = async (req, res) => {
     password: hashedPassword,
   };
 
-  const uniqueUser = await knex("users").where({username: username})
+  const uniqueUser = await knex("users").where({ username: username });
 
-  if (uniqueUser) { 
-return res.status(400).json({message: "User already exists"})
-  }
-
-  try {
-    await knex("users").insert(newUser);
-    res.status(201).json({ message: "Successfully registered user" });
-  } catch (error) {
-    res.status(400).json({ message: "Failed registration" });
+  if (uniqueUser.length === 0) {
+    try {
+      await knex("users").insert(newUser);
+      res.status(201).json({ message: "Successfully registered user" });
+    } catch (error) {
+      res.status(400).json({ message: "Failed registration" });
+    }
+  } else {
+    return res.status(400).json({ message: "User already exists" });
   }
 };
 
@@ -176,10 +182,10 @@ const favoriteMountain = async (req, res) => {
   }
 };
 
-//REMOVE A MOUNTAIN FROM YOUR FAVORITES 
+//REMOVE A MOUNTAIN FROM YOUR FAVORITES
 
-const removeMountain = async(req,res) => { 
-  const { mountain_id, users_id } = req.body
+const removeMountain = async (req, res) => {
+  const { mountain_id, users_id } = req.body;
 
   if (!mountain_id || !users_id) {
     return res
@@ -188,12 +194,22 @@ const removeMountain = async(req,res) => {
   }
 
   try {
-    const unlikeMountain = await knex("user_info").delete().where({mountain_id, users_id: mountain_id && users_id});
+    const unlikeMountain = await knex("user_info")
+      .delete()
+      .where({ mountain_id, users_id: mountain_id && users_id });
     return res.status(200).json(unlikeMountain);
   } catch (error) {
     console.error(error);
     return res.status(404).json({ message: "Error handling your request" });
   }
-}
+};
 
-module.exports = { signUp, login, googleLogin, currentUser, likedMountains, favoriteMountain, removeMountain };
+module.exports = {
+  signUp,
+  login,
+  googleLogin,
+  currentUser,
+  likedMountains,
+  favoriteMountain,
+  removeMountain,
+};
